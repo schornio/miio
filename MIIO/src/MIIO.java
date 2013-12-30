@@ -7,10 +7,13 @@ public class MIIO {
 	
 	static DifferentialPilot pilot = new DifferentialPilot(3.5f,13f, Motor.A, Motor.B,false);
 	
-	static TouchSensor leftBumper = new TouchSensor(SensorPort.S1);
+	static TouchSensor frontBumper = new TouchSensor(SensorPort.S1);
 	static TouchSensor rightBumper = new TouchSensor(SensorPort.S2);
 	
 	static LightSensor light = new LightSensor(SensorPort.S3);
+	static UltrasonicSensor uss = new UltrasonicSensor(SensorPort.S4);
+	
+	static final int MIN_DIST=5;
 	
 	public static void main(String[] args) {
 		System.out.println("Hi I'm MIIO");
@@ -19,18 +22,13 @@ public class MIIO {
 		while(Button.ENTER.isUp())	{
 			forward();
 		}
-		
 	}
 	
 	public static void forward() {
 		
-		//comment to test
+		if(frontBumper.isPressed()) { goBack(); return; }
 		
-		//System.out.println(light.getLightValue());
-		
-		if(leftBumper.isPressed()&&rightBumper.isPressed()) { goBack(); return; }
-		
-		if(leftBumper.isPressed()) { turnRight(); return; }
+		if(uss.getDistance()<MIN_DIST) {turnRight(); return;}
 		
 		if(rightBumper.isPressed()) { turnLeft(); return; }
 		
@@ -43,18 +41,15 @@ public class MIIO {
 	}
 	
 	public static void turnRight() {
-		
-		pilot.backward();
-
-		Delay.msDelay(500);
-		
+			
 		pilot.rotateRight();
 	}
 	
 	public static void goBack(){
 		pilot.backward();
-		double rndNum = Math.random();
-		if(rndNum<0.5) turnLeft();
-		else turnRight();
+		if(uss.getDistance()>MIN_DIST)	turnRight();
+		
+		else turnLeft();
+		pilot.backward();
 	}
 }
