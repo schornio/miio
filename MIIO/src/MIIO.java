@@ -4,12 +4,20 @@ import lejos.nxt.*;
 import lejos.util.Delay;
 public class MIIO {
 	
-	/*		?
-	 * o.o		 ?
+	/*
+	 * Schema der Sensoren
+	 *   o.o - Distanz-Sensor
+	 *   ?   - Druck-Sensor
+	 *   (x) - Motor
 	 * 
-	 * (x)		(x)
+	 * +----------------+
+	 * |		?		|
+	 * | o.o		 ?	|
+	 * |				|
+	 * | (x)		(x)	|
+	 * +----------------+
 	 * 
-	 * Left		Right
+	 *  Left		Right
 	 */
 	
 	static NXTMotor leftMotor = new NXTMotor(MotorPort.A);
@@ -26,9 +34,15 @@ public class MIIO {
 		System.out.println("Hi I'm MIIO!");
 		System.out.println("Press the orange button to start or stop.");
 		
+		//Der eigentliche Programmablauf wird erst nach druecken des orangen Knopfes gestartet.
 		Button.ENTER.waitForPressAndRelease();
+		
+		//Das Wegfindungsprogramm laeuft bis man wiederum den orangen Knopf drueckt
 		while(Button.ENTER.isUp()) {
 			
+			//Wenn der vordere Druck-Sensor gedrueckt wird:
+			// - setzt der Roboter 400ms zurueck
+			// - dreht sich der Roboter 50ms nach rechts weg
 			if(frontTouchSensor.isPressed()) {
 				pilot.backward();
 				Delay.msDelay(400);
@@ -38,13 +52,19 @@ public class MIIO {
 				continue;
 			}
 			
+			//Wenn der linke Druck-Sensor gedreuckt wird:
+			// - dreht sich der Roboter 50ms nach rechts weg
 			if(rightTouchSensor.isPressed()) {
-				pilot.turnLeft();
+				pilot.turnRight();
 				Delay.msDelay(50);
 				
 				continue;
 			}
 			
+			//Wenn der gepufferte Distanzsensor einen neuen Distanz-Wert errechnet hat:
+			// - Wird abhaengig von der Distanz, 
+			// - unter 20mm: vom Hindernis weg gedreht
+			// - ueber 60mm: zum Hindernis zu gedreht
 			if(distanceSensor.hasNewValue()) {
 				int distance = distanceSensor.getNewValue();
 				
@@ -54,6 +74,7 @@ public class MIIO {
 				continue;
 			}
 			
+			//Ansonsten bewegt sich der Roboter einfach nach vorne
 			pilot.forward();
 		}
 		
