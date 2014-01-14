@@ -12,6 +12,10 @@ public class MiioPilot {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 
+		
+	}
+	
+	public void start() {
 		this.leftMotor.setPower(MOTOR_POWER);
 		this.rightMotor.setPower(MOTOR_POWER);
 	}

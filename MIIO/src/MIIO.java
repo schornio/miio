@@ -39,6 +39,7 @@ public class MIIO {
 		
 		//Das Wegfindungsprogramm laeuft bis man wiederum den orangen Knopf drueckt
 		while(Button.ENTER.isUp()) {
+			pilot.start();
 			
 			//Wenn der vordere Druck-Sensor gedrueckt wird:
 			// - setzt der Roboter 400ms zurueck
@@ -47,7 +48,7 @@ public class MIIO {
 				pilot.backward();
 				Delay.msDelay(400);
 				pilot.turnRight();
-				Delay.msDelay(50);
+				Delay.msDelay(100);
 				
 				continue;
 			}
@@ -55,8 +56,8 @@ public class MIIO {
 			//Wenn der linke Druck-Sensor gedreuckt wird:
 			// - dreht sich der Roboter 50ms nach rechts weg
 			if(rightTouchSensor.isPressed()) {
-				pilot.turnRight();
-				Delay.msDelay(50);
+				pilot.turnLeft();
+				Delay.msDelay(100);
 				
 				continue;
 			}
@@ -68,8 +69,8 @@ public class MIIO {
 			if(distanceSensor.hasNewValue()) {
 				int distance = distanceSensor.getNewValue();
 				
-				if(distance < 20) { pilot.turnRight(); }
-				if(distance > 60) { pilot.turnLeft(); }
+				if(distance < 20) { pilot.turnRight(); Delay.msDelay(100); }
+				if(distance > 60) { pilot.turnLeft(); Delay.msDelay(100); }
 				
 				continue;
 			}
